@@ -4,8 +4,9 @@
   "description": "A modern web application for storing and searching jokes by category",
   "main": "index.html",
   "scripts": {
-    "start": "python -m http.server 8000",
-    "serve": "python3 -m http.server 8000"
+    "start": "./start-server.sh",
+    "serve": "./start-server.sh",
+    "dev": "./start-server.sh"
   },
   "keywords": [
     "jokes",
@@ -20,5 +21,8 @@
     "type": "git",
     "url": "https://github.com/yourusername/joke-vault.git"
   },
-  "homepage": "https://yourusername.github.io/joke-vault"
+  "homepage": "https://yourusername.github.io/joke-vault",
+  "dependencies": {
+    "firebase": "^12.2.1"
+  }
 }
