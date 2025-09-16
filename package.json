@@ -1,0 +1,24 @@
+{
+  "name": "joke-vault",
+  "version": "1.0.0",
+  "description": "A modern web application for storing and searching jokes by category",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "python3 -m http.server 8000"
+  },
+  "keywords": [
+    "jokes",
+    "firebase",
+    "firestore",
+    "javascript",
+    "web-app"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/joke-vault.git"
+  },
+  "homepage": "https://yourusername.github.io/joke-vault"
+}

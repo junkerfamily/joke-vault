@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joke Vault - Your Collection of Jokes</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎭 Joke Vault</h1>
+            <p>Discover and enjoy jokes by category</p>
+        </header>
+
+        <main>
+            <div class="search-section">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Search jokes or filter by type...">
+                    <button id="searchBtn">Search</button>
+                </div>
+                
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-type="all">All Jokes</button>
+                    <button class="filter-btn" data-type="knock-knock">Knock Knock</button>
+                    <button class="filter-btn" data-type="dad">Dad Jokes</button>
+                    <button class="filter-btn" data-type="one-liner">One-Liners</button>
+                    <button class="filter-btn" data-type="pun">Puns</button>
+                </div>
+            </div>
+
+            <div class="add-joke-section">
+                <button id="addJokeBtn" class="add-btn">+ Add New Joke</button>
+                
+                <div id="addJokeForm" class="joke-form hidden">
+                    <h3>Add a New Joke</h3>
+                    <select id="jokeType">
+                        <option value="knock-knock">Knock Knock</option>
+                        <option value="dad">Dad Joke</option>
+                        <option value="one-liner">One-Liner</option>
+                        <option value="pun">Pun</option>
+                    </select>
+                    <textarea id="jokeContent" placeholder="Enter your joke here..." rows="4"></textarea>
+                    <div class="form-buttons">
+                        <button id="saveJokeBtn">Save Joke</button>
+                        <button id="cancelJokeBtn">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="loading" id="loading">Loading jokes...</div>
+            
+            <div class="jokes-container" id="jokesContainer">
+                <!-- Jokes will be loaded here -->
+            </div>
+
+            <div class="no-results hidden" id="noResults">
+                <p>No jokes found. Try a different search term or category!</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js"></script>
+    
+    <script type="module" src="app.js"></script>
+</body>
+</html>
