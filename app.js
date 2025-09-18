@@ -6,6 +6,7 @@ import {
     addDoc, 
     getDocs, 
     deleteDoc, 
+    updateDoc,
     doc, 
     query, 
     where, 
@@ -114,6 +115,23 @@ function displayJokes(jokes) {
     hideNoResults();
     jokesContainer.innerHTML = jokes.map(joke => createJokeCard(joke)).join('');
     
+    // Add menu toggle event listeners
+    document.querySelectorAll('.menu-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const jokeId = e.target.dataset.jokeId;
+            toggleActionMenu(jokeId);
+        });
+    });
+    
+    // Add edit event listeners
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const jokeId = e.target.dataset.jokeId;
+            showEditForm(jokeId);
+        });
+    });
+    
     // Add delete event listeners
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -121,17 +139,53 @@ function displayJokes(jokes) {
             deleteJoke(jokeId);
         });
     });
+    
+    // Add save edit event listeners
+    document.querySelectorAll('.save-edit-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const jokeId = e.target.dataset.jokeId;
+            saveEditedJoke(jokeId);
+        });
+    });
+    
+    // Add cancel edit event listeners
+    document.querySelectorAll('.cancel-edit-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const jokeId = e.target.dataset.jokeId;
+            cancelEdit(jokeId);
+        });
+    });
+    
+    // Close action menus when clicking outside
+    document.addEventListener('click', closeAllActionMenus);
 }
 
 // Create joke card HTML
 function createJokeCard(joke) {
     return `
-        <div class="joke-card">
+        <div class="joke-card" data-joke-id="${joke.id}">
             <div class="joke-actions">
-                <button class="delete-btn" data-joke-id="${joke.id}">Delete</button>
+                <button class="menu-btn" data-joke-id="${joke.id}">⋮</button>
+                <div class="action-menu hidden" data-joke-id="${joke.id}">
+                    <button class="edit-btn" data-joke-id="${joke.id}">✏️ Edit</button>
+                    <button class="delete-btn" data-joke-id="${joke.id}">🗑️ Delete</button>
+                </div>
             </div>
             <div class="joke-type">${joke.type.replace('-', ' ')}</div>
-            <div class="joke-content">${joke.content}</div>
+            <div class="joke-content" data-joke-id="${joke.id}">${joke.content}</div>
+            <div class="edit-form hidden" data-joke-id="${joke.id}">
+                <select class="edit-type" data-joke-id="${joke.id}">
+                    <option value="knock-knock" ${joke.type === 'knock-knock' ? 'selected' : ''}>Knock Knock</option>
+                    <option value="dad" ${joke.type === 'dad' ? 'selected' : ''}>Dad Joke</option>
+                    <option value="one-liner" ${joke.type === 'one-liner' ? 'selected' : ''}>One-Liner</option>
+                    <option value="pun" ${joke.type === 'pun' ? 'selected' : ''}>Pun</option>
+                </select>
+                <textarea class="edit-content" data-joke-id="${joke.id}" rows="4">${joke.content}</textarea>
+                <div class="edit-buttons">
+                    <button class="save-edit-btn" data-joke-id="${joke.id}">Save</button>
+                    <button class="cancel-edit-btn" data-joke-id="${joke.id}">Cancel</button>
+                </div>
+            </div>
         </div>
     `;
 }
@@ -209,6 +263,92 @@ async function saveNewJoke() {
     } catch (error) {
         console.error('Error adding joke:', error);
         alert('Error adding joke. Please try again.');
+    }
+}
+
+// Toggle action menu
+function toggleActionMenu(jokeId) {
+    // Close all other menus first
+    document.querySelectorAll('.action-menu').forEach(menu => {
+        if (menu.dataset.jokeId !== jokeId) {
+            menu.classList.add('hidden');
+        }
+    });
+    
+    // Toggle the current menu
+    const menu = document.querySelector(`.action-menu[data-joke-id="${jokeId}"]`);
+    menu.classList.toggle('hidden');
+}
+
+// Close all action menus
+function closeAllActionMenus() {
+    document.querySelectorAll('.action-menu').forEach(menu => {
+        menu.classList.add('hidden');
+    });
+}
+
+// Show edit form
+function showEditForm(jokeId) {
+    // Hide the joke content and show edit form
+    const jokeCard = document.querySelector(`.joke-card[data-joke-id="${jokeId}"]`);
+    const jokeContent = jokeCard.querySelector('.joke-content');
+    const editForm = jokeCard.querySelector('.edit-form');
+    const actionMenu = jokeCard.querySelector('.action-menu');
+    
+    jokeContent.classList.add('hidden');
+    editForm.classList.remove('hidden');
+    actionMenu.classList.add('hidden');
+    
+    // Focus on the textarea
+    const textarea = editForm.querySelector('.edit-content');
+    textarea.focus();
+}
+
+// Cancel edit
+function cancelEdit(jokeId) {
+    const jokeCard = document.querySelector(`.joke-card[data-joke-id="${jokeId}"]`);
+    const jokeContent = jokeCard.querySelector('.joke-content');
+    const editForm = jokeCard.querySelector('.edit-form');
+    
+    // Reset form values to original
+    const originalJoke = allJokes.find(joke => joke.id === jokeId);
+    const typeSelect = editForm.querySelector('.edit-type');
+    const contentTextarea = editForm.querySelector('.edit-content');
+    
+    typeSelect.value = originalJoke.type;
+    contentTextarea.value = originalJoke.content;
+    
+    // Show joke content and hide edit form
+    jokeContent.classList.remove('hidden');
+    editForm.classList.add('hidden');
+}
+
+// Save edited joke
+async function saveEditedJoke(jokeId) {
+    const jokeCard = document.querySelector(`.joke-card[data-joke-id="${jokeId}"]`);
+    const editForm = jokeCard.querySelector('.edit-form');
+    const typeSelect = editForm.querySelector('.edit-type');
+    const contentTextarea = editForm.querySelector('.edit-content');
+    
+    const newType = typeSelect.value;
+    const newContent = contentTextarea.value.trim();
+    
+    if (!newContent) {
+        alert('Please enter a joke!');
+        return;
+    }
+    
+    try {
+        await updateDoc(doc(db, 'jokes', jokeId), {
+            type: newType,
+            content: newContent,
+            timestamp: new Date()
+        });
+        
+        loadJokes(); // Reload jokes to show updated content
+    } catch (error) {
+        console.error('Error updating joke:', error);
+        alert('Error updating joke. Please try again.');
     }
 }
 
