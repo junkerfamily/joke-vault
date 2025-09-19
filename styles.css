@@ -243,6 +243,58 @@ header p {
     line-height: 1.6;
     color: #333;
     white-space: pre-line;
+    margin-bottom: 15px;
+}
+
+.joke-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-top: 10px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.like-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.like-btn:hover {
+    background: #f5f5f5;
+    transform: scale(1.05);
+}
+
+.like-btn.liked {
+    color: #e91e63;
+    background: #fce4ec;
+}
+
+.like-btn.liked:hover {
+    background: #f8bbd9;
+}
+
+.heart-icon {
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.like-btn:hover .heart-icon {
+    transform: scale(1.2);
+}
+
+.like-count {
+    font-weight: 600;
+    min-width: 20px;
+    text-align: center;
 }
 
 .joke-actions {
